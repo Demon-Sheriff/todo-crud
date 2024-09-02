@@ -1,11 +1,13 @@
 # TODO-CRUD-App 
 
 ### Methods:
-1.`POST` Create Todos
+
+1. `POST` Create Todos
 ```
 localhost:3000/tasks
 ```
 - Post your todos in json objects to test with PostMan -> refer `index.js`
+
 
 2. `GET` Get all Todos
 ```
