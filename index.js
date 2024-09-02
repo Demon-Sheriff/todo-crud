@@ -1,7 +1,35 @@
+const { time } = require('console');
 const express = require('express');
 const app = express();
 const fs = require('fs').promises; // Use promises for async/await
 
+// count the number of requests
+let reqCount = 0;
+
+// Create a middleware that counts total number of requests sent to a server. Also create an endpoint that exposes it
+const requestCounter = (req, res, next) => {
+
+    reqCount++;
+    console.log(`Number of requests so far : ${reqCount}`);
+    next();
+}
+
+// Create a middleware function that logs each incoming request’s HTTP method, URL, and timestamp to the console
+const customMW = (req, res, next) => {
+    const method = req.method;
+    const completeURL = req.protocol + '://' + req.get('host') + req.originalUrl;
+    const timestamp = new Date().toISOString();
+    console.log(`method : ${method}
+                 complete URL : ${completeURL}
+                 time stamp : ${timestamp}`);
+    
+    // call the next middleware function.
+    next();
+}
+
+// middle-ware used to parse all the incoming data.
+app.use(requestCounter);
+app.use(customMW);
 app.use(express.json()); 
 // app.use(express.urlencoded({ extended: true })); 
 
@@ -9,6 +37,14 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.send("<div><h1><center><b>This is TODO-CRUD API written in Node.js</b></center></h1></div>");
 });
+
+// Get all the reqeust counts so far..
+app.get('/reqcounts', (req, res) => {
+    res.json({
+        reqCount
+    })
+    // console.log(`Requests so far are : ${reqCount}`);
+})
 
 // Get all the todos
 app.get('/todos', async (req, res) => {
